@@ -19,7 +19,7 @@ if not os.path.exists("respuestas.csv"):
 data = pd.read_csv("respuestas.csv")
 
 # Opciones resumidas
-options = ["Domino", "Gen. Domino", "A Veces", "No Domino"]
+options = ["Siempre", "Casi Sí", "Casi No", "Nunca"]
 
 st.title("Evaluación de Formación de Discípulos (Formulario Público)")
 
