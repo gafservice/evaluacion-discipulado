@@ -22,7 +22,7 @@ data = pd.read_csv("respuestas.csv")
 # Opciones resumidas
 options = ["Siempre", "Casi Si", "Casi No", "Nunca"]
 
-st.title("Evaluación de Formación de Discípulos (Formulario Público)")
+st.title("características que te equipan como discípulo")
 
 # --- Modo de Acceso ---
 modo = st.sidebar.selectbox("Modo de uso:", ["Responder Formulario", "Modo Administrador"])
