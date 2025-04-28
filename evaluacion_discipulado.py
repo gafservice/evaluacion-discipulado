@@ -6,10 +6,10 @@ import numpy as np
 import os
 from datetime import datetime
 
-# Configurar página
+# Configuración de página
 st.set_page_config(layout="wide")
 
-# Inicializar el archivo de datos si no existe
+# Inicializar archivo de datos
 if not os.path.exists("respuestas.csv"):
     df_init = pd.DataFrame(columns=[
         "Integridad", "Lealtad", "Fidelidad", "Firmeza", "Motivación", "Tacto", "Empatía"
@@ -19,15 +19,16 @@ if not os.path.exists("respuestas.csv"):
 # Cargar datos existentes
 data = pd.read_csv("respuestas.csv")
 
-# Opciones resumidas
-options = ["Siempre", "Casi Si", "Casi No", "Nunca"]
+# Opciones de respuesta
+options = ["Siempre", "Casi Sí", "Casi No", "Nunca"]
+puntaje_opciones = {"Siempre": 4, "Casi Sí": 3, "Casi No": 2, "Nunca": 1}
 
-st.title("características que te equipan como discípulo")
+st.title("Características que te equipan como discípulo")
 
 # --- Modo de Acceso ---
 modo = st.sidebar.selectbox("Modo de uso:", ["Responder Formulario", "Modo Administrador"])
 
-# --- Modo Público (solo formulario) ---
+# --- Modo Público ---
 if modo == "Responder Formulario":
     st.subheader("Autoevaluación Anónima")
 
@@ -59,7 +60,7 @@ if modo == "Responder Formulario":
         data.to_csv("respuestas.csv", index=False)
         st.success("¡Gracias por tu participación! Tus respuestas han sido registradas.")
 
-# --- Modo Admin (privado) ---
+# --- Modo Administrador ---
 elif modo == "Modo Administrador":
     st.subheader("Panel de Administración")
     password = st.text_input("Ingrese la clave de administrador:", type="password")
@@ -73,7 +74,7 @@ elif modo == "Modo Administrador":
 
             st.subheader("Resultados en tiempo real - Dashboard Privado")
 
-            # Primera fila de gráficos
+            # Gráficos
             cols = st.columns(4)
             for idx, area in enumerate(areas[:4]):
                 with cols[idx]:
@@ -88,7 +89,6 @@ elif modo == "Modo Administrador":
                     fig.patch.set_facecolor('#f0f2f6')
                     st.pyplot(fig)
 
-            # Segunda fila de gráficos
             cols = st.columns(3)
             for idx, area in enumerate(areas[4:]):
                 with cols[idx]:
@@ -111,17 +111,37 @@ elif modo == "Modo Administrador":
             )
 
             st.markdown("---")
+
+            # Análisis de resultados
+            st.subheader("🔎 Análisis y Sugerencias de Mejora")
+
+            promedio_areas = {}
+            for area in areas:
+                valores = data[area].map(puntaje_opciones)
+                promedio = valores.mean()
+                promedio_areas[area] = promedio
+
+            for area, promedio in promedio_areas.items():
+                if promedio >= 3.5:
+                    st.success(f"✅ {area}: Excelente nivel (Promedio: {promedio:.2f})")
+                elif 3.0 <= promedio < 3.5:
+                    st.info(f"ℹ️ {area}: Buen nivel (Promedio: {promedio:.2f})")
+                elif 2.0 <= promedio < 3.0:
+                    st.warning(f"⚠️ {area}: Nivel Regular (Promedio: {promedio:.2f}) ➔ Reforzar con prácticas diarias y mentoría espiritual.")
+                else:
+                    st.error(f"❗ {area}: Nivel Bajo (Promedio: {promedio:.2f}) ➔ Urgente fortalecer mediante devocionales, acompañamiento y discipulado cercano.")
+
+            st.markdown("---")
             if st.button("Guardar respaldo y reiniciar evaluación"):
-                # Guardar respaldo
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                 backup_filename = f"respuestas_backup_{timestamp}.csv"
                 data.to_csv(backup_filename, index=False)
                 st.success(f"Respaldo guardado como {backup_filename}.")
 
-                # Reiniciar datos
                 df_empty = pd.DataFrame(columns=data.columns)
                 df_empty.to_csv("respuestas.csv", index=False)
                 st.success("¡Evaluación reiniciada exitosamente! Recargá la página para ver el formulario vacío.")
+
         else:
             st.info("No hay datos registrados todavía.")
     else:
