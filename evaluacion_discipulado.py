@@ -4,8 +4,9 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 import numpy as np
 import os
+from datetime import datetime
 
-# Configuración de página
+# Configurar página
 st.set_page_config(layout="wide")
 
 # Inicializar el archivo de datos si no existe
@@ -19,7 +20,7 @@ if not os.path.exists("respuestas.csv"):
 data = pd.read_csv("respuestas.csv")
 
 # Opciones resumidas
-options = ["Siempre", "Casi Sí", "Casi No", "Nunca"]
+options = ["Siempre", "Casi Si", "Casi No", "Nunca"]
 
 st.title("Evaluación de Formación de Discípulos (Formulario Público)")
 
@@ -63,7 +64,6 @@ elif modo == "Modo Administrador":
     st.subheader("Panel de Administración")
     password = st.text_input("Ingrese la clave de administrador:", type="password")
 
-    # Cambia esta clave por una segura para tu uso
     if password == "clave123":
         st.success("Acceso concedido. Mostrando resultados en vivo.")
 
@@ -104,11 +104,24 @@ elif modo == "Modo Administrador":
                     st.pyplot(fig)
 
             st.download_button(
-                label="Descargar datos en CSV",
+                label="Descargar datos actuales en CSV",
                 data=data.to_csv(index=False).encode('utf-8'),
                 file_name='respuestas_discipulado.csv',
                 mime='text/csv'
             )
+
+            st.markdown("---")
+            if st.button("Guardar respaldo y reiniciar evaluación"):
+                # Guardar respaldo
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                backup_filename = f"respuestas_backup_{timestamp}.csv"
+                data.to_csv(backup_filename, index=False)
+                st.success(f"Respaldo guardado como {backup_filename}.")
+
+                # Reiniciar datos
+                df_empty = pd.DataFrame(columns=data.columns)
+                df_empty.to_csv("respuestas.csv", index=False)
+                st.success("¡Evaluación reiniciada exitosamente! Recargá la página para ver el formulario vacío.")
         else:
             st.info("No hay datos registrados todavía.")
     else:
