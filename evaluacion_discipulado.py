@@ -9,7 +9,7 @@ from datetime import datetime
 # Configurar página
 st.set_page_config(layout="wide")
 
-# Inicializar archivo de datos
+# Inicializar archivo de datos si no existe
 if not os.path.exists("respuestas.csv"):
     df_init = pd.DataFrame(columns=[
         "Integridad", "Lealtad", "Fidelidad", "Firmeza", "Motivación", "Tacto", "Empatía"
@@ -25,13 +25,13 @@ puntaje_opciones = {"Siempre": 4, "Casi Sí": 3, "Casi No": 2, "Nunca": 1}
 def cargar_datos():
     return pd.read_csv("respuestas.csv")
 
-# Título
+# Título principal
 st.title("Características que te equipan como discípulo")
 
 # --- Modo de Acceso ---
 modo = st.sidebar.selectbox("Modo de uso:", ["Responder Formulario", "Modo Administrador"])
 
-# --- Modo Público ---
+# --- Modo Público: Formulario ---
 if modo == "Responder Formulario":
     st.subheader("Autoevaluación Anónima")
 
@@ -79,7 +79,7 @@ elif modo == "Modo Administrador":
 
         if st.button("🔄 Refrescar datos"):
             st.cache_data.clear()
-            st.experimental_rerun()
+            st.rerun()
 
         data = cargar_datos()
 
@@ -95,7 +95,7 @@ elif modo == "Modo Administrador":
                     with cols[idx]:
                         conteo = data[area].value_counts().reindex(options, fill_value=0)
                         fig, ax = plt.subplots(figsize=(4, 3))
-                        bars = ax.bar(conteo.index, conteo.values, color=color_map(np.linspace(0.2, 0.8, 4)), edgecolor='black')
+                        ax.bar(conteo.index, conteo.values, color=color_map(np.linspace(0.2, 0.8, 4)), edgecolor='black')
                         ax.set_title(area, fontsize=12, weight='bold')
                         ax.set_ylabel('Cantidad', fontsize=10)
                         ax.set_ylim(0, max(conteo.values.max() + 1, 5))
@@ -109,7 +109,7 @@ elif modo == "Modo Administrador":
                     with cols[idx]:
                         conteo = data[area].value_counts().reindex(options, fill_value=0)
                         fig, ax = plt.subplots(figsize=(4, 3))
-                        bars = ax.bar(conteo.index, conteo.values, color=color_map(np.linspace(0.2, 0.8, 4)), edgecolor='black')
+                        ax.bar(conteo.index, conteo.values, color=color_map(np.linspace(0.2, 0.8, 4)), edgecolor='black')
                         ax.set_title(area, fontsize=12, weight='bold')
                         ax.set_ylabel('Cantidad', fontsize=10)
                         ax.set_ylim(0, max(conteo.values.max() + 1, 5))
@@ -159,4 +159,3 @@ elif modo == "Modo Administrador":
     else:
         if password != "":
             st.error("Clave incorrecta. Acceso denegado.")
-
