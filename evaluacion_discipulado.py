@@ -16,13 +16,16 @@ if not os.path.exists("respuestas.csv"):
     ])
     df_init.to_csv("respuestas.csv", index=False)
 
-# Cargar datos existentes
-data = pd.read_csv("respuestas.csv")
-
 # Opciones de respuesta
 options = ["Siempre", "Casi Sí", "Casi No", "Nunca"]
 puntaje_opciones = {"Siempre": 4, "Casi Sí": 3, "Casi No": 2, "Nunca": 1}
 
+# Función para cargar datos
+@st.cache_data(ttl=5, show_spinner=False)
+def cargar_datos():
+    return pd.read_csv("respuestas.csv")
+
+# Título
 st.title("Características que te equipan como discípulo")
 
 # --- Modo de Acceso ---
@@ -56,8 +59,9 @@ if modo == "Responder Formulario":
             "Tacto": tacto,
             "Empatía": empatia
         }
-        data = pd.concat([data, pd.DataFrame([nueva_respuesta])], ignore_index=True)
-        data.to_csv("respuestas.csv", index=False)
+        data_actual = cargar_datos()
+        data_actual = pd.concat([data_actual, pd.DataFrame([nueva_respuesta])], ignore_index=True)
+        data_actual.to_csv("respuestas.csv", index=False)
         st.success("¡Gracias por tu participación! Tus respuestas han sido registradas.")
 
 # --- Modo Administrador ---
@@ -72,6 +76,12 @@ elif modo == "Modo Administrador":
             "Selecciona una sección",
             ["Dashboard de Gráficos", "Análisis de Resultados", "Respaldar y Reiniciar"]
         )
+
+        if st.button("🔄 Refrescar datos"):
+            st.cache_data.clear()
+            st.experimental_rerun()
+
+        data = cargar_datos()
 
         if opcion_admin == "Dashboard de Gráficos":
             st.subheader("📊 Dashboard de Gráficos")
