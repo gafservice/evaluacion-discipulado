@@ -57,8 +57,27 @@ if modo == "Responder Formulario":
     st.subheader("Parte 1: Autoevaluación (1 = Nunca, 5 = Siempre)")
     with st.form("formulario"):
         respuestas = {}
-        for h in habilidades_base:
-            respuestas[h] = st.radio(f"¿Con qué frecuencia sentís que... {h.lower()}?", options_base, index=None)
+
+        respuestas["Manejo de emociones y sentimientos"] = st.radio(
+            "¿Sabés expresar lo que sentís sin lastimar a los demás?", options_base, index=None)
+        respuestas["Manejo de tensiones y estrés"] = st.radio(
+            "¿Podés mantener la calma cuando te sentís presionado o enojado?", options_base, index=None)
+        respuestas["Empatía"] = st.radio(
+            "¿Intentás ponerte en el lugar de otra persona para entender cómo se siente?", options_base, index=None)
+        respuestas["Comunicación asertiva"] = st.radio(
+            "¿Podés defender tus ideas con respeto, sin gritar ni quedarte callado?", options_base, index=None)
+        respuestas["Relaciones interpersonales"] = st.radio(
+            "¿Te llevás bien con otras personas, incluso si piensan distinto que vos?", options_base, index=None)
+        respuestas["Manejo de problemas y conflictos"] = st.radio(
+            "¿Buscás soluciones pacíficas cuando tenés un conflicto con alguien?", options_base, index=None)
+        respuestas["Autoconocimiento"] = st.radio(
+            "¿Conocés lo que te gusta, te cuesta o te hace enojar?", options_base, index=None)
+        respuestas["Toma de decisiones"] = st.radio(
+            "¿Pensás en las consecuencias antes de tomar decisiones importantes?", options_base, index=None)
+        respuestas["Pensamiento creativo"] = st.radio(
+            "¿Se te ocurren ideas nuevas o diferentes para resolver un problema?", options_base, index=None)
+        respuestas["Pensamiento crítico"] = st.radio(
+            "¿Cuestionás lo que ves o leés antes de darlo por cierto?", options_base, index=None)
 
         st.subheader("Parte 2: Situaciones cotidianas")
         respuestas["Reacción ante enojo de compañero"] = st.radio("Si un compañero se enoja con vos...", opciones_enojado, index=None)
